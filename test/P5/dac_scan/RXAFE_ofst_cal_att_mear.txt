@@ -1,0 +1,24 @@
+
+//stop fw 
+0xc05f,0x2
+//rx master atb en
+0xe0f1,0x4000
+//meas atb cal mux 001
+0xe0f1,0x4400
+//captclk sel 1 ->comp clk=0
+0xe09b,0x3e
+0xe08c,0xb00
+
+//dac ctrl sel 1->att dac
+0xe0a1,0x8000
+//cal mode0,muxa 3,muxb0 att out
+0xe0a6,0xc000
+
+
+
+
+
+
+
+
+

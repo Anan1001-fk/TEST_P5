@@ -1,0 +1,28 @@
+<component name="InspectionProjectProfileManager">
+  <profile version="1.0">
+    <option name="myName" value="Project Default" />
+    <inspection_tool class="PyPackageRequirementsInspection" enabled="true" level="WARNING" enabled_by_default="true">
+      <option name="ignoredPackages">
+        <list>
+          <option value="appdirs" />
+          <option value="black" />
+          <option value="bsdl-parser" />
+          <option value="click" />
+          <option value="docutils" />
+          <option value="ftd2xx" />
+          <option value="future" />
+          <option value="grako" />
+          <option value="mypy-extensions" />
+          <option value="pathspec" />
+          <option value="pywin32" />
+          <option value="regex" />
+          <option value="rope" />
+          <option value="rstcheck" />
+          <option value="toml" />
+          <option value="typed-ast" />
+          <option value="typing-extensions" />
+        </list>
+      </option>
+    </inspection_tool>
+  </profile>
+</component>

@@ -1,0 +1,167 @@
+// ------ scripts for ATE test ---------- 
+//clear qpll0/1 tune_done/in_reacal flag
+wr d02f,0000
+wr d02e,0000
+wr d039,0000
+wr d033,0000
+wr d03e,0000
+wr d03d,0000
+wr d03c,0000
+wr d03b,0000
+wr d038,0000
+wr d037,0000
+wr d036,0000
+wr d035,0000
+//clear tx_dcc_done_flag----(qpll0/qpll1/cpll/qpll0_cascade/qpll1_cascade)
+wr 8087,0000
+wr 8086,0000
+wr 8085,0000
+wr 8084,0000
+wr 8083,0000
+wr 8082,0000
+wr 8081,0000
+wr 8080,0000
+wr 80d6,0000
+wr 80d5,0000
+wr 80d4,0000
+wr 80d3,0000
+wr 80c9,0000
+wr 80c8,0000
+wr 80c7,0000
+wr 80c6,0000
+wr 80fc,0000
+wr 80fb,0000
+wr 80fa,0000
+wr 80f9,0000
+
+wr f03f,a6c0
+wr f01d,0302
+wr f01c,0600
+wr f015,481d
+wr f014,7398
+wr f013,0000
+wr f012,000a
+wr f011,0000
+wr f010,0000
+wr f00f,0000
+wr f019,82ac
+wr f018,be0f
+wr f017,2e40
+wr f016,2e40
+wr f01b,0040
+wr f00a,481d
+wr f009,7398
+wr f008,0000
+wr f007,000a
+wr f006,0000
+wr f005,0000
+wr f004,0000
+wr f00e,82ac
+wr f00d,be0f
+wr f00c,2e40
+wr f00b,2e40
+wr f01a,0040
+wr f022,0080
+wr f003,1800
+wr a018,1000
+wr a016,0001
+wr a015,13c0
+wr a010,000e
+wr a013,3540
+wr a01e,c500
+wr a01d,0040
+wr a01c,1e0d
+wr a01b,0204
+wr a1bb,8940
+wr a1bf,8000
+wr a1be,0000
+wr a1bd,0000
+wr a1bc,0000
+wr a17e,db68
+wr a16e,0008
+wr a1c5,0000
+wr a1c6,4000
+wr a11c,0028
+wr a1cc,ff00
+wr a1ce,0000
+wr a1cf,0000
+wr a1cd,0000
+wr a193,5e01
+wr a191,00a0
+wr 9138,0180
+wr 911c,0011
+wr 911b,0004
+wr 911a,f100
+wr 9119,5b2e
+wr 911f,083f
+wr 913f,0080
+wr 913e,0080
+wr 910f,2a00
+wr 90fb,1000
+wr 90f9,f800
+
+wr 903a,285d
+wr 9039,2897
+wr 9038,d000
+wr 9015,1440
+wr 9037,5000
+wr 9030,2a00
+wr 901a,0008
+wr 9019,0000
+wr 9018,c00a
+wr 9017,1ea4
+wr 9016,7148
+wr 9014,0734
+wr 9013,0008
+wr 9012,1440
+wr 9011,002a
+wr 9033,0080
+wr 903d,5500
+wr 901f,0000
+wr 9031,7f80
+wr 9032,0080
+wr d01b,5400
+wr d011,2a54
+wr d02b,5000
+wr d01d,0040
+wr d01c,0041
+wr d04a,7d50
+wr 8031,5000
+wr 912e,f000
+wr 90fe,4000
+
+wr 903f,f5f4
+delay 200
+wr 903f,55f4
+delay 200
+
+
+rd c12f
+rd c32f
+rd c52f
+rd c72f
+
+wr 9037,7000
+wr a01e,c700
+wr 9016,91c8
+
+//pg_mode
+wr a02d,9554
+//pm_mode
+wr a058,9c00
+wr a058,9800
+//wait_cdr_done
+delay 50
+
+rd e057
+rd e257
+rd e457
+rd e657
+
+wr a02d,9d54
+wr a02d,9d54
+
+rd e057
+rd e257
+rd e457
+rd e657

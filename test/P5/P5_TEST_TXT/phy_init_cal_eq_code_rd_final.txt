@@ -1,0 +1,146 @@
+//res tx up
+0xf077[9:0]
+//res tx dn
+0xf078[9:0]
+//res rx 
+0xf079[5:0]
+//QPLL0 coarse
+0xf0b7[7:0]
+//QPLL1 coarse
+0xf0d7[7:0]
+//VCO cal
+0xEN5c[9:0]
+//att os
+0xbN1F[7:0]
+//buf os
+0xbN18[7:0]
+//ctle os
+0xbN1E[7:0]
+//vga os
+0xbN1D[7:0]
+//att code
+0xEN40[7:5]
+//vga code
+0xEN7f[9:6]
+//bst code
+0xEN7e[9:5]
+//pole
+0xEN7e[11:10]
+//lbst
+0xc132[1:0]
+
+//tap1
+0xEN7d[13:5]
+//tap2
+0xEN7c[12:5]
+//tap3
+0xEN7b[11:5]
+//tap4
+0xEN7a[11:5]
+//tap5
+0xEN79[11:5]
+//tap6
+0xeM38[11:5]
+//tap7
+0xeM37[11:5]
+//tap8
+0xeM36[11:5]
+//tap9
+0xeM35[11:5]
+//tap10
+0xeM34[11:5]
+//tap11
+0xeM33[11:5]
+//tap12
+0xeM32[11:5]
+//tap13
+0xeM31[11:5]
+//tap14
+0xeM30[11:5]
+//tap15
+0xeM2f[11:5]
+//eyehe
+0xeM2e[8:0]
+//eyeho
+0xeN70[8:0]
+
+//dcc data fullrate diff
+0xb066[15:8]
+//dcc data fullrate cm
+0xb066[7:0]
+//dcc data half diff
+0xb064[15:8]
+//dcc data half cm
+0xb064[7:0]
+//dcc phs fullrate diff
+0xbN65[15:8]
+//dcc phs fullrate cm
+0xbN65[7:0]
+//dcc phs halfrate diff
+0xbN63[15:8]
+//dcc phs halfrate cm
+0xbN63[7:0]
+//iqc full rate
+0xbN62[15:8]
+//iqc half rate
+0xbN62[7:0]
+//even err os
+0xbN10[8:0]
+//odd err os
+0xbN0f[8:0]
+//even high os
+0xbN16[8:0]
+//even low os
+0xbN15[8:0]
+//odd high os
+0xbN14[8:0]
+//odd low os
+0xbN13[8:0]
+//phs even os
+0xbN1c[8:0]
+//phs odd os
+0xbN1b[8:0]
+//bypass even
+0xbN12[8:0]
+//bypass odd
+0xbN11[8:0]
+
+//qpll0 tx dcc  full diff 
+0xbN76[15:8]
+//qpll0 tx dcc  full cm
+0xbN76[7:0]
+//qpll0 tx dcc  half diff 
+0xbN75[15:8]
+//qpll0 tx dcc  half cm
+0xbN75[7:0]
+
+//qpll0 cas tx dcc  full diff 
+0xbNd1[15:8]
+//qpll0 cas tx dcc  full cm
+0xbNd1[7:0]
+//qpll0 cas tx dcc  half diff 
+0xbNd0[15:8]
+//qpll0 cas tx dcc  half cm
+0xbNd0[7:0]
+
+
+//qpll1 tx dcc  full diff 
+0xbN6e[15:8]
+//qpll1 tx dcc  full cm
+0xbN6e[7:0]
+//qpll1 tx dcc  half diff 
+0xbN6d[15:8]
+//qpll1 tx dcc  half cm
+0xbN6d[7:0]
+
+//qpll1 cas tx dcc  full diff 
+0xbNc4[15:8]
+//qpll1 cas tx dcc  full cm
+0xbNc4[7:0]
+//qpll1 cas tx dcc  half diff 
+0xbNc3[15:8]
+//qpll1 cas tx dcc  half cm
+0xbNc3[7:0]
+
+//err count
+0xeN57[15:0]

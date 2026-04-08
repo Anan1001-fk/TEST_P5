@@ -1,0 +1,24 @@
+
+//bypass contiu os
+0x8034,0x1000
+//rx margin dis
+0x90c5,0xdb80
+//ignore margin
+0x800c,0x120
+0x9036,0x5000
+//dis tx detrx
+0x901c,0x2000
+
+
+// rx powermode , powerdown,  rst, set_start
+0x903a,0x2800
+
+// tx powermode , powerdown, rst, set_start
+0x9039,0x2800
+
+// tx/rx  rst, set_start = 1
+0x903f,0x0f00
+
+
+// tx/rx  rst, set_start = 0
+0x903f,0x0500
