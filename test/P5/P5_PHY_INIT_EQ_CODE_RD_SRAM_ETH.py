@@ -6,7 +6,53 @@ import datetime
 
 
 
-
+# def configure_from_txt(txt_file, device):
+#     """
+#     从TXT文件读取并配置寄存器
+#
+#     参数:
+#         txt_file: TXT文件路径
+#         device: 设备对象
+#         lane: 通道号
+#     """
+#     with open(txt_file, 'r',encoding="UTF-8") as f:
+#         lines = f.readlines()
+#
+#     for line in lines:
+#         line = line.strip()
+#
+#         # 跳过空行和注释
+#         if not line or line.startswith('//') or line.startswith('#'):
+#             continue
+#
+#         # 处理延迟
+#         if line.startswith('delay'):
+#             parts = line.split()
+#             if len(parts) > 1:
+#                 delay_ms = int(parts[1])
+#                 time.sleep(delay_ms / 1000.0)
+#             continue
+#
+#         # 处理寄存器配置 (格式: 地址,值)
+#         if ',' in line:
+#             try:
+#                 # 分割地址和值
+#                 addr_str, value_str = line.split(',')
+#
+#                 # 转换为十六进制整数
+#                 addr = int(addr_str.strip(), 16)
+#                 value = int(value_str.strip(), 16)
+#
+#                 # 写入寄存器
+#                 write_serdes_register(device, addr, value)
+#                 time.sleep(0.005)
+#                 value0=read_serdes_register(device, addr)
+#                 print(f"addr=0x{addr:04X},{value0}")
+#                 print(f"addr=0x{addr:04X}, value=0x{value:04X}")
+#
+#
+#             except ValueError as e:
+#                 print(f"解析行失败 '{line}': {e}")
 
 def save_register_data_to_excel(txt_file, device, lane, external_times, excel_file="DC.xlsx"):
     """
@@ -70,7 +116,7 @@ if __name__ == "__main__":
     print(f"测试开始时间: {test_start_time}")
     full_lane = False
     lane = 0  # 逻辑通道号
-    port="COM36"
+    port=get_com_port_for_channel("C")
     baudrate=115200
     ser=uartm_init(port=port, baudrate=baudrate)
     for times in range(100):
@@ -96,8 +142,8 @@ if __name__ == "__main__":
         time.sleep(0.1)
         #txt_file="eq4_long_target50_tap1wgt0_dfe_tap1to5_1.20260325.rom_enc_new.txt"
         #txt_file = "eqlong_contafeos_nodir_mode2to0_contphos_contadptdfe.20260409.txt"
-        #txt_file="clean.fw_new_phy_init_rate_eqlong_contafeos_nodir_mode2to0_contphos.200260401.rom_enc_new.txt"
-        txt_file = "contadptdfe.20260413.txt"
+        #txt_file="P5_TEST_TXT/clean.fw_new_phy_init_rate_eqlong_contafeos_nodir_mode2to0_contphos.200260401.rom_enc_new.txt"
+        txt_file = "demo/contadptdfe.20260413.txt"
         write_32bit_data_from_txt(txt_file,device1,0,1,1)
         time.sleep(0.1)
         close_serdes(device1)
@@ -110,12 +156,11 @@ if __name__ == "__main__":
         device1 = setup_device(FTDI_CABLE_SERDES)
         phy_init(device1)
         #txt_file = 'ate_nearpma_PCIE_16GBPS_QPLL0_direct_ext_r260306.txt'  # 初始化到16G
-        txt_file = 'ate__pcie_32G_qpll0_casc_lpbk_ext_afeos_afeadapt_sram(2).txt'  # 初始化到32G
-
-        txt_file = 'test_ate_nearpma_Eternet_25P78125Gbps_qpll_direct_rx_init_contiuos.txt'  # 初始化到ETH25G
+        #txt_file = 'P5_TEST_TXT/ate__pcie_32G_qpll0_casc_lpbk_ext_afeos_afeadapt_sram(2).txt'  # 初始化到32G
+        txt_file = 'demo/test_ate_nearpma_Eternet_25P78125Gbps_qpll_direct_rx_init_contiuos.txt'  # 初始化到ETH25G
         configure_from_txt(txt_file, device1)
         time.sleep(0.1)
-        txt_file = 'cont_os_cal_final.txt'  # 初始化到32G
+        txt_file = 'P5_TEST_TXT/cont_os_cal_final.txt'  # 初始化到32G
         configure_from_txt(txt_file, device1)
         time.sleep(0.1)
         #write_serdes_bit_reg(device1, lane, 0xe1be, 0, 2, 0x7)
@@ -134,10 +179,10 @@ if __name__ == "__main__":
         #write_serdes_bit_reg(device1, lane, 0xe048, 0, 7, 0xff)
         #write_serdes_bit_reg(device1, lane, 0xe06c, 0, 2, 0)
         #txt_file = 'AFE_DFE_adapt_mode4_con_os_on.txt'  # 初始化到32G
-        txt_file = 'AFE_DFE_adapt_mode4.txt'  # 初始化到32G
+        txt_file = 'demo/AFE_DFE_adapt_mode4.txt'  # 初始化到32G
         configure_from_txt(txt_file, device1)
         time.sleep(0.1)
-        txt_file = 'cont_mode_all_on.txt'  # contiu cal
+        txt_file = 'demo/cont_mode_all_on.txt'  # contiu cal
         configure_from_txt(txt_file, device1)
         time.sleep(0.2)
 
@@ -147,7 +192,6 @@ if __name__ == "__main__":
         write_serdes_lane_register(device1, lane, 0xe058, 0x8C00)
         print("清掉误码后，等待1min")
         time.sleep(60)
-
         err_count = read_serdes_register(device1, 0xe057)
         time.sleep(0.1)
         if full_lane == True:

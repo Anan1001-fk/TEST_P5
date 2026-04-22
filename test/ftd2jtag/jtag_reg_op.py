@@ -640,6 +640,7 @@ def write_uartm(sequences,ser):
                 big_endian_value = int.from_bytes(response[:4], byteorder='big')  # 大端解析
                 little_endian_bytes = big_endian_value.to_bytes(4, byteorder='little')  # 转为小端字节
                 print(f"接收数据: {little_endian_bytes.hex()}")
+                #return little_endian_bytes.hex()
             else:
                 print("[警告] 未收到响应数据")
                 print("soc init failed")
@@ -649,6 +650,25 @@ def write_uartm(sequences,ser):
 
 
 
+def read_uartm(sequences,ser):
+    for i, seq in enumerate(sequences, 1):
+        byte_data = bytes.fromhex(seq)
+        ser.write(byte_data)
+        time.sleep(0.1)
+        if seq.startswith('1104'):
+            time.sleep(0.2)
+            response = ser.read_all()
+            if response:
+                big_endian_value = int.from_bytes(response[:4], byteorder='big')  # 大端解析
+                little_endian_bytes = big_endian_value.to_bytes(4, byteorder='little')  # 转为小端字节
+                print(f"接收数据: {little_endian_bytes.hex()}")
+                return little_endian_bytes.hex()
+            else:
+                print("[警告] 未收到响应数据")
+                print("soc init failed")
+                ser.close()
+                print("===========串口已安全关闭==========")
+                break
 
 
 def soc_init( port='COM21', baudrate=115200):
@@ -789,7 +809,7 @@ def configure_from_txt(txt_file, device):
         1. 原有格式：地址,值  （例如：0xe01f,0x0005）
         2. wr格式：wr 地址,值  或 wr 地址 值 （例如：wr d02f,0000 或 wr d02f 0000）
         """
-        with open(txt_file, 'r') as f:
+        with open(txt_file, 'r',encoding="UTF-8") as f:
             lines = f.readlines()
 
         for line in lines:
@@ -836,7 +856,7 @@ def configure_from_txt(txt_file, device):
                 try:
                     addr = int(addr_str, 16)
                     value = int(value_str, 16)
-                    write_serdes_lane_register(device, 0, addr, value)  # lane参数可根据需要调整
+                    write_serdes_register(device,  addr, value)  # lane参数可根据需要调整
                     print(f"配置: addr=0x{addr:04X}, value=0x{value:04X}")
                 except ValueError as e:
                     print(f"解析失败: {line} - {e}")
@@ -858,7 +878,7 @@ def configure_from_txt(txt_file, device):
 
                     addr = int(addr_str, 16)
                     value = int(value_str, 16)
-                    write_serdes_lane_register(device, 0, addr, value)
+                    write_serdes_register(device,  addr, value)
                     print(f"配置: addr=0x{addr:04X}, value=0x{value:04X}")
                 except ValueError as e:
                     print(f"解析失败: {line} - {e}")
@@ -1009,7 +1029,6 @@ def write_32bit_data_from_txt(txt_file, device, start_addr=0, step=1, delay_ms=1
             addr = start_addr + idx * step
             print(f"[{idx+1}/{total}] 写入地址 0x{addr:04X}: 0x{value:08X}...", end='', flush=True)
             write_serdes_register_32b(device, addr, value)
-            # print()
             # read_serdes_register_32bit(device, addr)
             print("完成")
         except ValueError as e:
@@ -1083,3 +1102,106 @@ def get_com_port_for_channel(channel_letter='C'):
 
 
     return None
+
+
+
+
+
+def read_uartm_from_txt(txt_path: str, ser: serial.Serial):
+        """
+        从 txt 文件中读取命令，每条命令为十六进制字符串（如 "1004b000089001200220"）。
+        自动区分写命令（1004开头）和读命令（1104开头），执行对应的串口操作。
+        """
+        # 读取所有非空、非注释行
+        with open(txt_path, 'r', encoding='utf-8') as f:
+            lines = [line.strip() for line in f if line.strip() and not line.startswith('#')]
+
+        for i, seq in enumerate(lines, 1):
+            print(f"\n--- 处理第 {i} 条命令: {seq} ---")
+            # 转换为字节并发送
+            byte_data = bytes.fromhex(seq)
+            ser.write(byte_data)
+            print(f"发送: {seq}")
+
+            # 如果是读命令（1104开头），需要读取响应
+            if seq.startswith('1104'):
+                time.sleep(0.2)  # 等待设备响应
+                response = ser.read_all()
+                if response:
+                    # 取前 4 字节，按大端解析为整数
+                    big_endian_value = int.from_bytes(response[:4], byteorder='big')
+                    # 转换为小端字节序的十六进制字符串
+                    little_endian_bytes = big_endian_value.to_bytes(4, byteorder='little')
+                    print(f"接收原始数据: {response.hex()}")
+                    print(f"解析结果（小端十六进制）: {little_endian_bytes.hex()}")
+                else:
+                    print("【警告】未收到响应数据")
+                    print("SOC init failed")
+                    ser.close()
+                    print("==========串口已安全关闭==========")
+                    break  # 读失败则终止整个流程
+            else:
+                # 写命令只发送，不等待响应（也可视情况加短延时）
+                time.sleep(0.1)
+
+            # 可根据需要增加命令间延时
+            time.sleep(0.05)
+
+
+import serial
+import time
+
+def read_uartm_bit_reg(ser: serial.Serial, addr_hex: str, startbit: int, endbit: int, byteorder: str = 'big') -> int | None:
+    """
+    从指定地址读取一个寄存器（4字节），并提取 [startbit, endbit] 范围内的位值。
+
+    参数:
+        ser:       已打开的 pySerial 对象
+        addr_hex:  地址部分，例如 "b0000890" (将拼接为 "1104b0000890")
+        startbit:  起始位索引（LSB=0）
+        endbit:    结束位索引（包含）
+        byteorder: 响应数据的字节序，'big' 或 'little'，默认 'big'
+
+    返回:
+        提取出的整数值；若读取失败或无响应则返回 None
+    """
+    # 1. 构造读命令
+    cmd = f"1104{addr_hex}"
+    print(f"[读命令] 发送: {cmd}")
+
+    # 2. 发送命令
+    ser.write(bytes.fromhex(cmd))
+    time.sleep(0.2)          # 等待设备响应
+
+    # 3. 读取响应
+    response = ser.read_all()
+    if not response:
+        print("[警告] 未收到响应数据")
+        return None
+
+    # 只取前4字节（假设寄存器数据长度为4字节）
+    if len(response) < 4:
+        print(f"[警告] 响应数据不足4字节: {response.hex()}")
+        return None
+
+    data_bytes = response[:4]
+    print(f"[接收原始] {data_bytes.hex()}")
+
+    # 4. 根据字节序转换为整数
+    if byteorder == 'big':
+        reg_value = int.from_bytes(data_bytes, byteorder='big')
+    else:
+        reg_value = int.from_bytes(data_bytes, byteorder='little')
+
+    print(f"[寄存器完整值] 0x{reg_value:08X} ({reg_value})")
+
+    # 5. 提取位域
+    if startbit > endbit:
+        raise ValueError("startbit 必须 <= endbit")
+    bit_len = endbit - startbit + 1
+    mask = ((1 << bit_len) - 1) << startbit
+    bit_value = (reg_value & mask) >> startbit
+
+    print(f"[位域提取] bits[{startbit}:{endbit}] = {bit_value} (0x{bit_value:X})")
+    return bit_value
+

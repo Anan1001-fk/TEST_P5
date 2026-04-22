@@ -6,7 +6,53 @@ import datetime
 
 
 
-
+# def configure_from_txt(txt_file, device):
+#     """
+#     从TXT文件读取并配置寄存器
+#
+#     参数:
+#         txt_file: TXT文件路径
+#         device: 设备对象
+#         lane: 通道号
+#     """
+#     with open(txt_file, 'r',encoding="UTF-8") as f:
+#         lines = f.readlines()
+#
+#     for line in lines:
+#         line = line.strip()
+#
+#         # 跳过空行和注释
+#         if not line or line.startswith('//') or line.startswith('#'):
+#             continue
+#
+#         # 处理延迟
+#         if line.startswith('delay'):
+#             parts = line.split()
+#             if len(parts) > 1:
+#                 delay_ms = int(parts[1])
+#                 time.sleep(delay_ms / 1000.0)
+#             continue
+#
+#         # 处理寄存器配置 (格式: 地址,值)
+#         if ',' in line:
+#             try:
+#                 # 分割地址和值
+#                 addr_str, value_str = line.split(',')
+#
+#                 # 转换为十六进制整数
+#                 addr = int(addr_str.strip(), 16)
+#                 value = int(value_str.strip(), 16)
+#
+#                 # 写入寄存器
+#                 write_serdes_register(device, addr, value)
+#                 time.sleep(0.005)
+#                 value0=read_serdes_register(device, addr)
+#                 print(f"addr=0x{addr:04X},{value0}")
+#                 print(f"addr=0x{addr:04X}, value=0x{value:04X}")
+#
+#
+#             except ValueError as e:
+#                 print(f"解析行失败 '{line}': {e}")
 
 def save_register_data_to_excel(txt_file, device, lane, external_times, excel_file="DC.xlsx"):
     """
@@ -73,7 +119,7 @@ if __name__ == "__main__":
     port=get_com_port_for_channel("C")
     baudrate=115200
     ser=uartm_init(port=port, baudrate=baudrate)
-    for times in range(5):
+    for times in range(1):
         # part1
         part1 = ["1004b04048ccffffbc03", "1104b04048cc",
                  "1004b062000410000000", "1104b0620004",
@@ -94,7 +140,7 @@ if __name__ == "__main__":
         device1 = setup_device(FTDI_CABLE_SERDES)
         phy_init(device1)
         time.sleep(0.1)
-        txt_file="P5_TEST_TXT/eq4_target50_tap1wgt2_dfe_tap1to5_1.20260324.rom_enc_new.txt"
+        txt_file = "demo/contadptdfe.20260413.txt"
         write_32bit_data_from_txt(txt_file,device1,0,1,1)
         time.sleep(0.1)
         close_serdes(device1)
@@ -106,35 +152,27 @@ if __name__ == "__main__":
         write_uartm(part2,ser)
         device1 = setup_device(FTDI_CABLE_SERDES)
         phy_init(device1)
-        txt_file = 'ate__pcie_32G_qpll0_casc_lpbk_ext_afeos_afeadapt_sram(2).txt'  # 初始化到32G
+        txt_file = 'demo/test_ate_nearpma_Eternet_25P78125Gbps_qpll_direct_rx_init_contiuos.txt'  # 初始化到ETH25G
         configure_from_txt(txt_file, device1)
         time.sleep(0.1)
-        txt_file = 'cont_os_cal_final.txt'  # 初始化到32G
+        txt_file = 'P5_TEST_TXT/cont_os_cal_final.txt'  # 初始化到32G
         configure_from_txt(txt_file, device1)
         time.sleep(0.1)
         write_serdes_bit_reg(device1, lane, 0xe010, 2, 10, 0x10)
-        #write_serdes_bit_reg(device1,lane,0xe13f,0,14,0x1f)
-        #write_serdes_bit_reg(device1, lane, 0xe048, 0, 7, 0xff)
-        #write_serdes_bit_reg(device1, lane, 0xe06c, 0, 2, 0)
-        txt_file = 'AFE_DFE_adapt_mode4.txt'  # 初始化到32G
+        txt_file = 'demo/AFE_DFE_adapt_mode4.txt'  # 初始化到32G
         configure_from_txt(txt_file, device1)
+        time.sleep(0.1)
+        txt_file = 'demo/cont_mode_all_on.txt'  # contiu cal
+        configure_from_txt(txt_file, device1)
+        time.sleep(0.2)
+        write_serdes_register(device1,0xc037,0xd000)
         time.sleep(0.1)
         write_serdes_lane_register(device1, lane, 0xe058, 0x8C00)
         time.sleep(1)
         write_serdes_lane_register(device1, lane, 0xe058, 0x8C00)
-        print("清掉误码后，等待1min")
-        time.sleep(60)
-
-        err_count = read_serdes_register(device1, 0xe057)
-        time.sleep(0.1)
-        if full_lane == True:
-            for lane in range(4):
-                txt_file = "phy_init_cal_eq_code_rd_final.txt"
-                save_register_data_to_excel(txt_file, device1, lane, external_times=times, excel_file="read_eq_code.xlsx")
-        else:
-            txt_file = "phy_init_cal_eq_code_rd_final.txt"
-            save_register_data_to_excel(txt_file, device1, lane, external_times=times, excel_file="read_eq_code.xlsx")
+        print("================success!!!!=====================")
         close_serdes(device1)
+
 
 
 

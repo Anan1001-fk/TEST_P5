@@ -71,37 +71,26 @@ def uartm_init(port='COM21', baudrate=115200):
     )
     return ser
 
-def write_uartm(sequences):
-    for i, seq in enumerate(sequences, 1):
-        byte_data = bytes.fromhex(seq)
-        ser.write(byte_data)
-        if seq.startswith('1104'):
-            time.sleep(0.2)
-            response = ser.read_all()
-            if response:
-                big_endian_value = int.from_bytes(response[:4], byteorder='big')  # 大端解析
-                little_endian_bytes = big_endian_value.to_bytes(4, byteorder='little')  # 转为小端字节
-                print(f"接收数据: {little_endian_bytes.hex()}")
-            else:
-                print("[警告] 未收到响应数据")
-                print("soc init failed")
-                flag = 1
-                break
 
 
 
 if __name__=="__main__":
     test_start_time = datetime.datetime.now()
     print(f"测试开始时间: {test_start_time}")
-    soc_init(port='COM25', baudrate=115200)
+    port = get_com_port_for_channel("C")
+    baudrate = 115200
+    #ser = uartm_init(port=port, baudrate=baudrate)
+    soc_init(port=port, baudrate=115200)
+    # datawidth = ["1004b00008c0c4000000", "1004b00008c0c2000000", "1004b00008c0c1000000"]
+    # write_uartm(datawidth, ser)
+    # for i in datawidth:
+    #     write_uartm([i], ser)
     FTDI_CABLE_SERDES = b"A"  #
     device1 = setup_device(FTDI_CABLE_SERDES)
     print("Verifying serdes...")
     init_serdes(device1)
-    write_serdes_lane_register(device1,0,0xe058,0x1c00)
-    value=read_serdes_register(device1,0xe058)
-    value=read_serdes_bit_reg(device1,0,0xe058,0,15)
-    value = read_serdes_register(device1, 0,0xe058)
+    write_serdes_bit_reg(device1,0,0xe115,1,7,17)
+    value=read_serdes_bit_reg(device1,0,0xe115,1,7)
     print("0xf01e:", value)
     if (value == "0x4967"):
         print("环境没有问题！！！")

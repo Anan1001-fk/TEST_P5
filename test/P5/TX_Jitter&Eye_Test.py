@@ -12,10 +12,10 @@ def test():
    wb=openpyxl.load_workbook("P5_Jitter&Eye.xlsx")
    ws=wb.worksheets[0]
    last_row=ws.max_row+1
-   address = "TCPIP0::169.254.161.219::inst0::INSTR"
+   address = "TCPIP0::169.254.202.222::inst0::INSTR"
    uxr=uxr0134a.Uxr0134a(address)
-   channal=1
-   chip_num="TT01"
+   channal=3
+   chip_num="FF01"
    temp_volt="NTNV"
    lane=0
    index=lane
@@ -45,7 +45,7 @@ def test():
        uxr.auto_verticalscale(channal)
        time.sleep(2)
        uxr.clear_display()
-       time.sleep(5)
+       time.sleep(10)
        uxr.set_uxr_state("stop")
        time.sleep(0.1)
        vpp = uxr.get_meas_val(channal, "VPP",meas_statistic="MEAN")
@@ -97,7 +97,7 @@ def test():
            uxr.auto_verticalscale(channal)
            time.sleep(2)
            uxr.clear_display()
-           time.sleep(5)
+           time.sleep(10)
            uxr.set_uxr_state("stop")
            time.sleep(0.1)
            vpp = uxr.get_meas_val(channal, "VPP", meas_statistic="MEAN")
@@ -151,7 +151,7 @@ def test():
            uxr.auto_verticalscale(channal)
            time.sleep(2)
            uxr.clear_display()
-           time.sleep(5)
+           time.sleep(10)
            uxr.set_uxr_state("stop")
            time.sleep(0.1)
            vpp = uxr.get_meas_val(channal, "VPP", meas_statistic="MEAN")
@@ -248,7 +248,7 @@ def test():
        uxr.auto_verticalscale(channal)
        time.sleep(2)
        uxr.clear_display()
-       time.sleep(5)
+       time.sleep(15)
        uxr.set_uxr_state("stop")
        time.sleep(0.1)
        vpp = uxr.get_meas_val(channal, "VPP",meas_statistic="MEAN")
